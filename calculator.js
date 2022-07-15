@@ -5,34 +5,37 @@ function add(arr){
         if (subArr.includes("-")){
             subArr = subtract(subArr);
         }
-        else if(subArr.includes("\u00d7")){
+        if(subArr.includes("\u00d7")){
             subArr = multiply(subArr);
         }
-        else if(subArr.includes("\u00f7")){
+        if(subArr.includes("\u00f7")){
             subArr = divide(subArr);
         }
         sum += parseInt(subArr);
     })
-    return sum;
+    return sum.toString();
 }
 
 function subtract(arr){
     arr = arr.split("-");
     let difference = arr[0];
+    if(difference.includes("\u00d7")){
+        difference = multiply(difference);
+    }
+    if(difference.includes("\u00f7")){
+        difference = divide(difference);
+    }
     for(let i = 1; i<arr.length;i++){
         let subArr = arr[i];
-        if (subArr.includes("+")){
-            subArr = add(subArr);
-        }
-        else if(subArr.includes("\u00d7")){
+        if(subArr.includes("\u00d7")){
             subArr = multiply(subArr);
         }
-        else if(subArr.includes("\u00f7")){
+        if(subArr.includes("\u00f7")){
             subArr = divide(subArr);
         }
         difference -= parseInt(subArr);
     }
-    return difference;
+    return difference.toString();
 }
 
 function multiply(arr){
@@ -44,20 +47,20 @@ function multiply(arr){
         }
         prod *= parseInt(subArr);
     })
-    return prod;
+    return prod.toString();
 }
 
-function divide(num1, num2){
+function divide(arr){
     arr = arr.split("\u00f7");
     let div = arr[0];
     for(let i = 1; i< arr.length; i++){
         let subArr  =arr[i];
-        if(subArr.includes("\u00d7")){
-            subArr = multiply(subArr);
-        }
+        // if(subArr.includes("\u00d7")){
+        //     subArr = multiply(subArr);
+        // }
         div /= parseInt(subArr);
     }
-    return div;
+    return div.toString();
 }
 
 function exponent(num1, num2){
@@ -77,7 +80,7 @@ buttonBox.setAttribute("id","buttonBox");
 let screenVals = "";
 let lastInput = "";
 let operators = "+=\u00f7\u00d7";
-let lastResult = ">>>>>>>>>";
+let result = ">>>>>>>>>";
 
 function addListeners(div){
     div.addEventListener("click",()=>{
@@ -93,25 +96,25 @@ function addListeners(div){
             
             screenVals += div.textContent;
             if (lastInput != "+" && lastInput != "\u00f7" && lastInput != "-" && lastInput != "\u00d7" && !operators.includes(div.textContent)){
-                lastInput += div.textContent;
+                //lastInput += div.textContent;
             }
             else lastInput =div.textContent;
         }
         updateScreen();
-        console.log(lastInput);
     });
 }
 
 function calculate(){
-    let lastline = screenVals.split(lastResult);
+    let lastline = screenVals.split(`=${result}`);
     lastline = lastline[lastline.length-1];
+    lastline = lastline.replace("\n","");
     if(operators.includes(lastline.charAt(0))){
-        lastline = parseInt(lastResult.split("="))+lastline;
+        lastline = `${result}${lastline}`;
+        console.log(`lastLine(special):${lastline}`);
     }
     result = add(lastline);
-    lastResult = "="+result;
     //result = 8008;
-    displayResult(Result);
+    displayResult(result);
 }
 function displayResult(result){
     screenVals +=`\n=${result}\n`;
